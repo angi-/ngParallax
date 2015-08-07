@@ -1,0 +1,2 @@
+# ngParallax
+AngularJS parallax directive

@@ -1,0 +1,33 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  height: 2000px;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+h2 {
+  color: #fff;
+  font-size: 72px;
+  text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.jumbotron {
+  background-image: url(https://placeimg.com/1280/600/arch);
+  height: 460px;
+  background-size: cover;
+  background-position: 50% 50%;
+  position: relative;
+  text-align: center;
+  background-color: #121212;
+}
+
+.jumbotron h2 {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  -ms-transform: translate(0, -100%); /* IE 9 */
+  -webkit-transform: translate(0, -100%); /* Safari */
+  transform: translate(0, -100%);
+}

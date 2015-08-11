@@ -1,0 +1,25 @@
+{
+  "name": "angular-parallax",
+  "version": "0.0.1",
+  "homepage": "https://github.com/angi-/angular-parallax",
+  "authors": [
+    "Angelin <angelin.sirbu@yahoo.com>"
+  ],
+  "description": "Parallax effect for AngularJS apps",
+  "keywords": [
+    "angular",
+    "angularjs",
+    "parallax"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.3"
+  }
+}

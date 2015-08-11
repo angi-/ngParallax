@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ngParallax">
+  <head>
+    <meta charset="UTF-8">
+    <title>AngularJS Parallax plugin example</title>
+    <link href="http://fonts.googleapis.com/css?family=Roboto:400,700,500,300" rel="stylesheet" type="text/css">
+    <link href="styles.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>ngParallax</h1>
+    <h3>Scroll to see it in action</h3>
+
+    <div
+      parallax
+      parallax-ratio="0.35"
+      parallax-css="background-position-y:calc"
+      parallax-init-val="50"
+      parallax-init-unit="%"
+      parallax-use-unit="px"
+      class="jumbotron">
+      <h2>ngParallax</h2>
+    </div>
+    <script src="../bower_components/angular/angular.min.js"></script>
+    <script src="../src/ngParallax.js"></script>
+  </body>
+</html>

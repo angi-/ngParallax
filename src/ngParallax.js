@@ -1,165 +1,107 @@
-angular
-  /**
-   * Angular parallax module
-   */
-  .module('ngParallax', [])
+(function ()
+{
+  'use strict';
 
-  /**
-   * Angular parallax directive
-   */
-  .directive('parallax', ['$window', function ($window)
-  {
-    return {
-      restrict: 'A',
-      link: function(scope, elm, attr)
-      {
-        var
-          /**
-           * CSS property that will be changed with scroll
-           */
-          cssProperty,
+  angular
+    /**
+     * Angular parallax module
+     */
+    .module('ngParallax', [])
 
-          /**
-           * CSS value
-           */
-          cssFunction,
-
-          /**
-           * Is the CSS value a special value?
-           */
-          useCssFunction,
-
-          /**
-           * Parallax CSS value
-           */
-          parallaxCssVal,
-
-          /**
-           * Parallax scroll ratio
-           */
-          parallaxRatio,
-
-          /**
-           * Position value at initiation
-           */
-          parallaxInitVal,
-
-          /**
-           * CSS unit of measuremnt at initiation
-           */
-          parallaxInitUnit,
-
-          /**
-           * Array containing CSS property and special function
-           */
-          cssValArray,
-
-          /**
-           * CSS unit of measurement when scrolling
-           */
-          parallaxUseUnit;
-
-        // Find out if parallax affects an element top position or CSS property
-        parallaxCssVal = attr.parallaxCss ? attr.parallaxCss : 'top';
-
-        // Set the CSS proprty and value
-        cssValArray = parallaxCssVal.split(':');
-        cssProperty = cssValArray[0];
-        cssFunction = cssValArray[1];
-
-        // Check if function is used
-        useCssFunction = cssFunction ? true : false;
-        if ( ! cssFunction) cssFunction = cssProperty;
-
-        // Set parallax ratio
-        parallaxRatio = attr.parallaxRatio ? +attr.parallaxRatio : 1.1;
-
-        // Set parallax initial value
-        parallaxInitVal = attr.parallaxInitVal ? +attr.parallaxInitVal : 0;
-
-        // Set parallax initial unit
-        parallaxInitUnit = attr.parallaxInitUnit;
-
-        // Set paxallax calculated unit
-        parallaxUseUnit = attr.parallaxUseUnit;
-
-        // Bind events
-        _bind();
-
-        /**
-         * Function called by the scroll and touch move events
-         */
-        function _update()
+    /**
+     * Angular parallax directive
+     */
+    .directive('parallax', ['$window', function ($window)
+    {
+      return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, elm, attr)
         {
-          // Don't update if element is not in fold or visible
-          if( ! _isElementInFold() || elm[0].offsetParent === null)
-          {
-            return;
-          }
+          var
+            /**
+             * CSS property that will be changed with scroll
+             * @type {string}
+             */
+            property = attr.property,
+
+            /**
+             * Template for updating the CSS property. "{var}" is the variable part of the template
+             * @type string
+             */
+            template = attr.template,
+
+            /**
+             * Parallax scroll ratio
+             */
+            ratio = attr.ratio ? +attr.ratio : 1.1,
+
+            /**
+             * The calculated value that needs to be applied
+             * @type {string}
+             */
+            calcVal,
+
+            /**
+             * The final CSS value
+             * @type {string}
+             */
+            resultVal;
+
+          // Bind events
+          _bind();
 
           /**
-           * Result value applied to element's style
-           * @type string
+           * Function called by the scroll and touch move events
            */
-          var resultVal;
-
-          if (useCssFunction)
+          function _update()
           {
-            // CSS property updated by CSS function
-            if(cssFunction == 'calc')
+            // Don't update if element is not in fold or visible
+            if( ! _isElementInFold() || elm[0].offsetParent === null)
             {
-              var calcVal = $window.pageYOffset * parallaxRatio;
-              resultVal = 'calc(' + parallaxInitVal + parallaxInitUnit + ' + ' + calcVal + parallaxUseUnit + ')';
+              return;
             }
-            else
-            {
-              var calcVal = $window.pageYOffset * parallaxRatio + parallaxInitVal;
-              resultVal = '' + cssFunction + '(' + calcVal + parallaxUseUnit + ')';
-            }
+
+            // Calculate and apply
+            calcVal = $window.pageYOffset * ratio + 'px';
+            resultVal = template.split("{var}").join(calcVal);
+            elm.css(property, resultVal);
           }
-          else
+
+          /**
+           * Checks if element is in the fold
+           * @return {bool}
+           */
+          function _isElementInFold()
           {
-            // CSS property updated by value
-            var calcVal = $window.pageYOffset * parallaxRatio + parallaxInitVal;
-            resultVal = (calcVal > parallaxInitVal) ? '' + calcVal + parallaxUseUnit : '' + parallaxInitVal + parallaxInitUnit;
+            return ($window.pageYOffset + $window.innerHeight >= elm[0].offsetTop && $window.pageYOffset <= elm[0].offsetTop + elm[0].offsetHeight);
           }
 
-          // Apply CSS
-          elm.css(cssProperty, resultVal);
-        }
+          /**
+           * Binds scroll and touch move events to the update function
+           */
+          function _bind()
+          {
+            // Listen for scroll and touch move events
+            angular.element($window).bind('scroll', _update);
+            angular.element($window).bind('touchmove', _update);
+            angular.element($window).bind('resize', _update);
+          }
 
-        /**
-         * Checks if element is in the fold
-         * @return {bool}
-         */
-        function _isElementInFold()
-        {
-          return ($window.pageYOffset + $window.innerHeight >= elm[0].offsetTop && $window.pageYOffset <= elm[0].offsetTop + elm[0].offsetHeight);
-        }
+          /**
+           * Cleans up bindings on destroy
+           */
+          function _cleanup()
+          {
+            angular.element($window).unbind('scroll', _update);
+            angular.element($window).unbind('touchmove', _update);
+            angular.element($window).unbind('resize', _update);
+          }
 
-        /**
-         * Binds scroll and touch move events to the update function
-         */
-        function _bind()
-        {
-          // Listen for scroll and touch move events
-          angular.element($window).bind('scroll', _update);
-          angular.element($window).bind('touchmove', _update);
-          angular.element($window).bind('resize', _update);
+          // Clean up bindings
+          scope.$on('$destroy', _cleanup);
         }
+      };
+    }]);
 
-        /**
-         * Cleans up bindings on destroy
-         */
-        function _cleanup()
-        {
-          angular.element($window).unbind('scroll', _update);
-          angular.element($window).unbind('touchmove', _update);
-          angular.element($window).unbind('resize', _update);
-        }
-
-        // Clean up bindings
-        scope.$on('$destroy', _cleanup);
-      }
-    };
-  }]);
+})();
